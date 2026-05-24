@@ -1,0 +1,5 @@
+# Copy this file to ~/.zshrc.local and fill in your values.
+# This file is NOT tracked by git.
+# export GITHUB_TOKEN=""
+# export OPENAI_API_KEY=""
+# export AWS_PROFILE=""
