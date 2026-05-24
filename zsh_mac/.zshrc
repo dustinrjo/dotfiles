@@ -1,7 +1,12 @@
+# Enable Powerlevel10k instant prompt. Must stay at the very top of ~/.zshrc.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""  # Theme handled by powerlevel10k (sourced below)
 
 # Update behavior
 # zstyle ':omz:update' mode disabled
@@ -35,7 +40,7 @@ fi
 [[ -f /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
   source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Aliases (shared with bash_omarchy)
+# Aliases
 alias la='ls -la'
 alias gs='git status'
 gall() { git add -A && git commit -m "$*"; }
@@ -46,5 +51,12 @@ alias code='open -a "Visual Studio Code"'
 # zoxide (smart cd)
 eval "$(zoxide init zsh --cmd cd)"
 
+# Powerlevel10k (installed via brew)
+[[ -f /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]] && \
+  source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
+
 # Machine-local secrets and overrides (never committed)
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
+# p10k config — run `p10k configure` to regenerate
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

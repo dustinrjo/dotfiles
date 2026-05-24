@@ -12,6 +12,7 @@ brew "stow"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "zoxide"
+brew "powerlevel10k"
 
 # Language toolchains
 brew "pyenv"
