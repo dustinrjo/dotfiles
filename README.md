@@ -15,9 +15,38 @@ Each top-level directory is a stow "package" whose contents mirror the layout of
 | `homebrew_mac` | macOS | `~/.Brewfile` |
 | `iterm2` | macOS | colour scheme, imported manually — not stowed |
 
+`bootstrap.sh` sets up a fresh machine end to end; `install.sh` just does the
+stowing and is safe to re-run.
+
 ## Installation
 
-### Omarchy (and other Arch systems)
+### Fresh machine (the one-liner)
+
+`bootstrap.sh` does the whole thing: system update, installs stow, clones this
+repo, links it into `$HOME`, and installs the Neovim plugins.
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/dustinrjo/dotfiles/master/bootstrap.sh)
+```
+
+**It is for a machine whose current shell and editor config you do not care
+about** — it discards the existing `~/.bashrc` and `~/.config/nvim` contents in
+favour of this repo's. It prints exactly what it is about to discard and asks
+before doing it (`--yes` skips the prompt).
+
+```
+--skip-update   Don't run the system update
+--skip-nvim     Don't run the initial 'Lazy! sync'
+-y, --yes       Don't prompt before discarding existing config
+```
+
+`DOTFILES_REPO` and `DOTFILES_DIR` override the repo and clone location.
+
+### Manual
+
+If you'd rather do it by hand, or you're on a machine with config worth keeping:
+
+#### Omarchy (and other Arch systems)
 
 On a clean Omarchy install the pacman sync databases are not populated yet, so
 `pacman -S stow` fails with "target not found". Sync through Omarchy first:
@@ -32,19 +61,19 @@ pre-transaction hook aborts any pacman command carrying both `-S` and `-u`, and
 tells you to use `omarchy update` instead. Plain `sudo pacman -S <pkg>` has no
 `-u` and is never blocked.
 
-### Ubuntu/Debian
+#### Ubuntu/Debian
 
 ```bash
 sudo apt install stow
 ```
 
-### macOS
+#### macOS
 
 ```bash
 brew install stow
 ```
 
-### Deploy
+#### Deploy
 
 ```bash
 git clone https://github.com/dustinrjo/dotfiles.git ~/dotfiles
@@ -66,12 +95,13 @@ real `~/.bashrc` and a populated `~/.config/nvim`, so the first `stow` will
 report conflicts. Either move the originals aside, or let stow absorb them:
 
 ```bash
-stow --adopt nvim_omarchy   # replaces repo contents with the files already in ~
-git diff                    # review — then `git checkout .` to keep the repo's version
+./install.sh --adopt   # or: stow --adopt nvim_omarchy
+git diff               # review — then `git checkout -- .` to keep the repo's version
 ```
 
-`--adopt` moves the existing files *into the repo* and then links them, so always
-check `git diff` afterwards to see which side won.
+`--adopt` moves the existing files *into* the repo and then links them, so always
+check `git diff` afterwards to see which side won. This is exactly what
+`bootstrap.sh` automates.
 
 ## Omarchy 4 notes
 
@@ -122,8 +152,31 @@ git commit -m "update config"
 git push
 ```
 
+This includes writes made by tools, not just your own edits — Lazy rewrites
+`lazy-lock.json` through the symlink whenever it installs or updates a plugin,
+so `git status` after a `:Lazy sync` is normal and worth committing.
+
 After Omarchy or LazyVim updates change the tracked defaults, re-run
 `git diff` before committing so an upstream improvement isn't reverted.
+
+### Syncing another machine
+
+Once a machine is bootstrapped, pulling is all it takes — the symlinks already
+point into the repo, so updated files are live immediately:
+
+```bash
+cd ~/dotfiles && git pull
+```
+
+Two caveats:
+
+- **New files need a re-stow.** A pull that adds a file to a package doesn't
+  create its symlink. Run `./install.sh` again (it uses `--restow`, so it is
+  safe to repeat) to link anything new.
+- **Restart the shell** after `~/.bashrc` changes: `exec bash`.
+
+Don't re-run `bootstrap.sh` on an already-bootstrapped machine to pick up
+changes. It's for first-time setup and will discard uncommitted local config.
 
 ## Removing Links
 
