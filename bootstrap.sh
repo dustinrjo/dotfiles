@@ -15,6 +15,11 @@
 set -euo pipefail
 
 REPO_URL="${DOTFILES_REPO:-https://github.com/dustinrjo/dotfiles.git}"
+# An explicitly exported DOTFILES_DIR wins over the running-from-a-clone
+# detection below; otherwise the script would silently operate on its own
+# checkout instead of the directory it was told to use.
+DOTFILES_DIR_SET=0
+[ -n "${DOTFILES_DIR:-}" ] && DOTFILES_DIR_SET=1
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
 SKIP_UPDATE=0
 SKIP_NVIM=0
@@ -153,7 +158,7 @@ fi
 step "Obtaining the dotfiles repo"
 
 SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
-if [ -n "$SELF_DIR" ] && [ -d "$SELF_DIR/.git" ] && [ -d "$SELF_DIR/nvim_omarchy" ]; then
+if [ "$DOTFILES_DIR_SET" -eq 0 ] && [ -n "$SELF_DIR" ] && [ -d "$SELF_DIR/.git" ] && [ -d "$SELF_DIR/nvim_omarchy" ]; then
   DOTFILES_DIR="$SELF_DIR"
   info "running from an existing clone: $DOTFILES_DIR"
 elif [ -e "$DOTFILES_DIR" ]; then
