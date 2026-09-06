@@ -23,6 +23,7 @@ DOTFILES_DIR_SET=0
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
 SKIP_UPDATE=0
 SKIP_NVIM=0
+SKIP_PLUGINS=0
 ASSUME_YES=0
 
 usage() {
@@ -31,6 +32,7 @@ Usage: bootstrap.sh [options]
 
   --skip-update   Don't run the system update (assumes stow is installable already)
   --skip-nvim     Don't run the initial 'Lazy! sync' plugin install
+  --skip-plugins  Don't install the Omarchy shell plugins
   -y, --yes       Don't prompt before discarding existing config
   -h, --help      Show this help
 
@@ -44,6 +46,7 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --skip-update) SKIP_UPDATE=1 ;;
     --skip-nvim) SKIP_NVIM=1 ;;
+    --skip-plugins) SKIP_PLUGINS=1 ;;
     -y | --yes) ASSUME_YES=1 ;;
     -h | --help)
       usage
@@ -209,6 +212,37 @@ else
     info "${YELLOW}lazy-lock.json changed; commit it to pin these versions:${RESET}"
     info "  git -C \"$DOTFILES_DIR\" commit -am 'update lazy-lock'"
   fi
+fi
+
+# --------------------------------------------------------------------------
+step "Installing Omarchy shell plugins"
+
+# id -> repo. `omarchy plugin add --enable` clones into
+# ~/.config/omarchy/plugins/<id> and switches to it; enablement is recorded by
+# the shell, so nothing here needs stowing.
+OMARCHY_PLUGINS=(
+  "oedo.lock=https://github.com/dustinrjo/omarchy-lock-oedo.git"
+)
+
+if [ "$SKIP_PLUGINS" -eq 1 ]; then
+  info "${DIM}skipped (--skip-plugins)${RESET}"
+elif [ "$FLAVOUR" != "omarchy" ]; then
+  info "${DIM}not Omarchy; skipping${RESET}"
+else
+  for entry in "${OMARCHY_PLUGINS[@]}"; do
+    plugin_id="${entry%%=*}"
+    plugin_url="${entry#*=}"
+    if [ -e "$HOME/.config/omarchy/plugins/$plugin_id" ]; then
+      info "$plugin_id already installed"
+      continue
+    fi
+    # A cosmetic plugin must never fail the whole bootstrap.
+    if omarchy plugin add "$plugin_url" --enable --yes; then
+      info "${GREEN}installed $plugin_id${RESET}"
+    else
+      warn "could not install $plugin_id; continuing without it"
+    fi
+  done
 fi
 
 # --------------------------------------------------------------------------

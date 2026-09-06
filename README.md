@@ -103,6 +103,34 @@ git diff               # review — then `git checkout -- .` to keep the repo's 
 check `git diff` afterwards to see which side won. This is exactly what
 `bootstrap.sh` automates.
 
+## Omarchy shell plugins
+
+The lock screen lives in its own repo, not here: it is a Quickshell plugin, and
+Omarchy installs and updates those itself.
+
+| Plugin | Repo |
+| --- | --- |
+| `oedo.lock` — lock screen | https://github.com/dustinrjo/omarchy-lock-oedo |
+
+`bootstrap.sh` installs them on a fresh machine. To do it by hand:
+
+```bash
+omarchy plugin add https://github.com/dustinrjo/omarchy-lock-oedo.git --enable
+omarchy plugin update oedo.lock          # later, to pull changes
+omarchy plugin enable omarchy.lock       # switch back to the stock lock screen
+```
+
+They are deliberately not stow packages. `omarchy plugin update` only works on
+a real git checkout, and `omarchy plugin add` refuses a symlinked target, so
+stowing one would trade away updates for nothing. See the plugin repo's README
+for the full toggle and update instructions.
+
+Nor is `~/.config/omarchy/shell.json` tracked here, even though it records
+which plugins are enabled: Omarchy's update migrations rewrite it with
+`jq ... > tmp && mv tmp shell.json`, and that `mv` would replace a stow symlink
+with a regular file, silently detaching it from this repo. `--enable` makes
+tracking it unnecessary.
+
 ## Omarchy 4 notes
 
 Things that changed from Omarchy 3 and that this repo now accounts for:
