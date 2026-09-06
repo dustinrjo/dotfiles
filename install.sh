@@ -55,6 +55,7 @@ elif [ "$OS" = "Linux" ]; then
   stow_package "nvim_omarchy"
   stow_package "bash_omarchy"
   stow_package "claude"
+  stow_package "hypr_omarchy"
 else
   echo "Unsupported platform: $OS" >&2
   exit 1

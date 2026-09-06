@@ -11,6 +11,7 @@ Each top-level directory is a stow "package" whose contents mirror the layout of
 | --- | --- | --- |
 | `nvim_omarchy` | both | `~/.config/nvim` (LazyVim + Omarchy 4 defaults, plus personal tweaks) |
 | `bash_omarchy` | Linux | `~/.bashrc` |
+| `hypr_omarchy` | Linux | `~/.config/hypr/input.lua` only (three-finger workspace swipe) |
 | `zsh_mac` | macOS | `~/.zshrc` |
 | `homebrew_mac` | macOS | `~/.Brewfile` |
 | `claude` | both | `~/.claude/settings.json` (Claude Code settings only) |
@@ -171,19 +172,24 @@ Things that changed from Omarchy 3 and that this repo now accounts for:
   active theme. Stowing a copy replaces the symlink and pins the colorscheme,
   breaking `omarchy theme set` for Neovim. It is in `.gitignore` for this reason —
   set your colorscheme with `omarchy theme set`, not in this repo.
-- **No `hypr` package.** Hyprland config is Lua now (`hyprland.lua`,
-  `bindings.lua`, `monitors.lua`, …) and hyprlock is gone, replaced by
-  `omarchy-system-lock`. The files Omarchy ships in `~/.config/hypr` are
-  comment-only override stubs loaded *after* Omarchy's defaults, so package
-  updates can improve the defaults without rewriting them. Nothing there is
-  customized yet; committing pristine stubs would just freeze them. If you do
-  customize one, add a `hypr_omarchy` package containing only that file:
+- **`hypr_omarchy` tracks only files you customized.** Hyprland config is Lua
+  now (`hyprland.lua`, `bindings.lua`, `monitors.lua`, `input.lua`, …) and
+  hyprlock is gone, replaced by `omarchy-system-lock`. Omarchy ships the files
+  in `~/.config/hypr` as comment-only override stubs loaded *after* the
+  defaults, so package updates can improve the defaults without rewriting
+  them. Do **not** stow the whole directory: committing pristine stubs would
+  freeze them. The package currently contains only `input.lua` (three-finger
+  swipe between workspaces). To add another customized file:
 
   ```bash
   mkdir -p ~/dotfiles/hypr_omarchy/.config/hypr
   mv ~/.config/hypr/monitors.lua ~/dotfiles/hypr_omarchy/.config/hypr/
   cd ~/dotfiles && stow hypr_omarchy
   ```
+
+  `omarchy refresh hyprland` copies with `cp -f`, which writes *through* a
+  stow symlink and can put the stock stub back into this repo. After a
+  refresh, `git diff` and restore from git if `input.lua` was overwritten.
 
 ## Adding New Configs
 
