@@ -1,0 +1,11 @@
+{
+  "theme": "auto",
+  "editorMode": "vim",
+  "agentPushNotifEnabled": true,
+  "tui": "fullscreen",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  }
+}

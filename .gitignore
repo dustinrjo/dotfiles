@@ -8,3 +8,8 @@ secrets/
 # Omarchy manages this as a symlink into ~/.local/state/omarchy/current/theme.
 # Tracking it would freeze the colorscheme and break `omarchy theme set`.
 nvim_omarchy/.config/nvim/lua/plugins/theme.lua
+
+# Only ~/.claude/settings.json is tracked. Everything else Claude Code keeps
+# in ~/.claude is credentials, transcripts, or machine-local state.
+claude/.claude/*
+!claude/.claude/settings.json

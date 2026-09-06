@@ -50,9 +50,11 @@ if [ "$OS" = "Darwin" ]; then
   stow_package "nvim_omarchy"
   stow_package "zsh_mac"
   stow_package "homebrew_mac"
+  stow_package "claude"
 elif [ "$OS" = "Linux" ]; then
   stow_package "nvim_omarchy"
   stow_package "bash_omarchy"
+  stow_package "claude"
 else
   echo "Unsupported platform: $OS" >&2
   exit 1

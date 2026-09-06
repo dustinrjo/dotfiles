@@ -13,6 +13,7 @@ Each top-level directory is a stow "package" whose contents mirror the layout of
 | `bash_omarchy` | Linux | `~/.bashrc` |
 | `zsh_mac` | macOS | `~/.zshrc` |
 | `homebrew_mac` | macOS | `~/.Brewfile` |
+| `claude` | both | `~/.claude/settings.json` (Claude Code settings only) |
 | `iterm2` | macOS | colour scheme, imported manually — not stowed |
 
 `bootstrap.sh` sets up a fresh machine end to end; `install.sh` just does the
@@ -102,6 +103,31 @@ git diff               # review — then `git checkout -- .` to keep the repo's 
 `--adopt` moves the existing files *into* the repo and then links them, so always
 check `git diff` afterwards to see which side won. This is exactly what
 `bootstrap.sh` automates.
+
+## Claude Code settings
+
+The `claude` package tracks **only** `~/.claude/settings.json`. Everything else
+Claude Code keeps in `~/.claude` — `.credentials.json`, `history.jsonl`,
+`projects/`, `sessions/`, `shell-snapshots/` — is credentials, transcripts, or
+machine-local state and must never be committed. `.gitignore` enforces that as
+an allowlist (`claude/.claude/*` with a single negation), so a stray file
+copied into the package is ignored by default rather than published by
+accident.
+
+Stow folds into the existing `~/.claude`, symlinking that one file and leaving
+its siblings alone.
+
+If Claude Code ever writes settings atomically (temp file plus rename) it would
+replace the symlink with a regular file and silently detach it from this repo —
+the same failure mode that keeps `shell.json` untracked. To check after
+changing a setting through `/config`:
+
+```bash
+ls -l ~/.claude/settings.json     # must still show '-> ../dotfiles/...'
+```
+
+If it has become a regular file, re-run `stow --adopt --restow claude` and
+review `git diff`.
 
 ## Omarchy shell plugins
 
