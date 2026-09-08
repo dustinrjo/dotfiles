@@ -1,11 +1,12 @@
 {
-  "theme": "auto",
-  "editorMode": "vim",
-  "agentPushNotifEnabled": true,
-  "tui": "fullscreen",
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
-  }
+  },
+  "tui": "fullscreen",
+  "theme": "auto",
+  "editorMode": "vim",
+  "agentPushNotifEnabled": true,
+  "model": "opus[1m]"
 }
