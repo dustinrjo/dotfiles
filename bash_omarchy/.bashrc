@@ -46,3 +46,6 @@ gall() {
 }
 
 shopt -s autocd
+
+# Omarchy's first-word completion only lists commands; add folders back for autocd
+complete -I -A command -A directory -X 'omarchy-*'
