@@ -158,6 +158,28 @@ which plugins are enabled: Omarchy's update migrations rewrite it with
 with a regular file, silently detaching it from this repo. `--enable` makes
 tracking it unnecessary.
 
+## Omarchy 3.8 compatibility
+
+One machine is still on Omarchy 3.8, so the shared config has to work on both:
+
+- **`~/.bashrc`** sources `env-bootstrap` only when it exists and falls back to
+  `OMARCHY_PATH=~/.local/share/omarchy`, so it loads Omarchy's defaults on 3.8
+  too, including from a TTY or SSH login where the desktop session hasn't set
+  `OMARCHY_PATH`.
+- **`install.sh`** stows `hypr_omarchy` only on Omarchy 4 (3.8's Hyprland config
+  is `.conf`, not Lua).
+- **`theme.lua` is untracked, so recreate its symlink by hand** on a 3.8 machine
+  that has `~/.config/nvim` linked into this repo. Without it Neovim ignores the
+  Omarchy theme:
+
+  ```bash
+  ln -s ~/.config/omarchy/current/theme/neovim.lua \
+    ~/dotfiles/nvim_omarchy/.config/nvim/lua/plugins/theme.lua
+  ```
+
+  (On Omarchy 4 the target is `~/.local/state/omarchy/current/theme/neovim.lua`
+  and Omarchy creates the link itself.)
+
 ## Omarchy 4 notes
 
 Things that changed from Omarchy 3 and that this repo now accounts for:

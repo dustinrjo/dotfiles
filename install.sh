@@ -55,7 +55,13 @@ elif [ "$OS" = "Linux" ]; then
   stow_package "nvim_omarchy"
   stow_package "bash_omarchy"
   stow_package "claude"
-  stow_package "hypr_omarchy"
+  # hypr_omarchy holds Omarchy 4 Lua config; Omarchy 3.x uses hyprland.conf and
+  # would just get an unused input.lua.
+  if [ -d /usr/share/omarchy ]; then
+    stow_package "hypr_omarchy"
+  else
+    echo "Skipping hypr_omarchy (not Omarchy 4)"
+  fi
 else
   echo "Unsupported platform: $OS" >&2
   exit 1

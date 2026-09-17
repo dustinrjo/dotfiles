@@ -7,7 +7,10 @@
 
 # All the default Omarchy aliases and functions
 # (don't mess with these directly, just overwrite them here!)
-source "$OMARCHY_PATH/default/bash/rc"
+# Omarchy 3.x has no env-bootstrap and lives in ~/.local/share/omarchy; its
+# desktop session usually exports OMARCHY_PATH, but a TTY or SSH login may not.
+: "${OMARCHY_PATH:=$HOME/.local/share/omarchy}"
+[[ -r $OMARCHY_PATH/default/bash/rc ]] && source "$OMARCHY_PATH/default/bash/rc"
 
 # ---------------------------------------------------------------------------
 # Personal exports, aliases, and functions below.
@@ -21,6 +24,9 @@ case ":$PATH:" in
   *":$HOME/.local/bin:"*) ;;
   *) export PATH="$HOME/.local/bin:$PATH" ;;
 esac
+
+# cargo
+[ -d "$HOME/.cargo/bin" ] && export PATH="$HOME/.cargo/bin:$PATH"
 
 # pyenv
 if [ -d "$HOME/.pyenv" ] || command -v pyenv >/dev/null 2>&1; then
@@ -49,3 +55,9 @@ shopt -s autocd
 
 # Omarchy's first-word completion only lists commands; add folders back for autocd
 complete -I -A command -A directory -X 'omarchy-*'
+
+# Grok CLI (keep the installer's markers so a reinstall doesn't append a second copy)
+# >>> grok installer >>>
+[ -d "$HOME/.grok/bin" ] && export PATH="$HOME/.grok/bin:$PATH"
+[[ -r "$HOME/.grok/completions/bash/grok.bash" ]] && source "$HOME/.grok/completions/bash/grok.bash"
+# <<< grok installer <<<
